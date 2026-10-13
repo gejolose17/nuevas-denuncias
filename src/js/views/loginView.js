@@ -247,3 +247,4 @@ export class LoginView {
       .replace(/"/g, '&quot;');
   }
 }
+

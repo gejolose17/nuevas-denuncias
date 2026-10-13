@@ -38,10 +38,14 @@ class AuthService {
       }
     }
 
+    const rawRedirect = (import.meta.env.VITE_AZURE_REDIRECT_URI || '').trim();
+    // En Microsoft Entra ID (SPA), los redirect URIs no deben contener '#' (fragmentos)
+    const cleanRedirect = rawRedirect ? rawRedirect.split('#')[0] : window.location.origin;
+
     return {
       clientId: (import.meta.env.VITE_AZURE_CLIENT_ID || '').trim(),
       tenantId: (import.meta.env.VITE_AZURE_TENANT_ID || 'organizations').trim(),
-      redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI || window.location.origin
+      redirectUri: cleanRedirect || window.location.origin
     };
   }
 
@@ -309,3 +313,4 @@ class AuthService {
 }
 
 export const authService = new AuthService();
+
