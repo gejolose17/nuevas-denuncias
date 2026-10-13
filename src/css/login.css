@@ -1,0 +1,352 @@
+/**
+ * UAM ReportHub - Institutional Login & Microsoft SSO Styles
+ */
+
+.login-screen-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 10% 20%, rgba(0, 153, 168, 0.08) 0%, rgba(248, 250, 252, 1) 90%),
+              radial-gradient(circle at 90% 80%, rgba(0, 35, 71, 0.06) 0%, rgba(248, 250, 252, 1) 90%);
+  background-color: #F8FAFC;
+  padding: 24px;
+  overflow-y: auto;
+  font-family: var(--font-family-base);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -15px rgba(0, 35, 71, 0.12), 0 0 1px 1px rgba(0, 0, 0, 0.04);
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: loginCardFadeIn 0.35s ease-out;
+}
+
+@keyframes loginCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.login-logo-img {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+.login-badge-sys {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--uam-teal);
+  background: var(--uam-teal-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.login-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1E293B;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
+}
+
+.login-subtitle {
+  font-size: 13.5px;
+  color: var(--uam-grey);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Security notice banner */
+.login-domain-notice {
+  width: 100%;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.login-domain-notice.is-warning {
+  background: #FFFBEB;
+  border-color: #FDE68A;
+}
+
+.login-notice-icon {
+  flex-shrink: 0;
+  color: #16A34A;
+  margin-top: 1px;
+}
+
+.login-notice-text {
+  font-size: 12px;
+  color: #166534;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.login-domain-highlight {
+  font-weight: 700;
+  background: rgba(22, 101, 52, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Error Alert */
+.login-error-alert {
+  width: 100%;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #991B1B;
+  font-size: 12.5px;
+  line-height: 1.45;
+  text-align: left;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  animation: shakeAlert 0.3s ease;
+}
+
+@keyframes shakeAlert {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Official Microsoft Button */
+.btn-microsoft-auth {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #2F2F2F;
+  color: #FFFFFF;
+  border: 1px solid #2F2F2F;
+  border-radius: 8px;
+  padding: 13px 20px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-microsoft-auth:hover {
+  background: #1A1A1A;
+  border-color: #1A1A1A;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.btn-microsoft-auth:active {
+  transform: translateY(0);
+}
+
+.btn-microsoft-auth:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ms-logo-svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Diagnostic / Testing Section */
+.login-test-section {
+  width: 100%;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--border-color);
+  text-align: left;
+}
+
+.login-test-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--uam-grey-dark);
+  padding: 6px 0;
+}
+
+.login-test-header:hover {
+  color: var(--uam-teal);
+}
+
+.login-test-content {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #F8FAFC;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.login-test-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-test-action {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: #FFFFFF;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-test-action:hover {
+  background: #F1F5F9;
+  border-color: var(--uam-teal);
+  color: var(--uam-teal);
+}
+
+.btn-test-reject {
+  color: #B91C1C;
+}
+
+.btn-test-reject:hover {
+  background: #FEF2F2;
+  border-color: #F87171;
+  color: #DC2626;
+}
+
+/* Azure Config Mini Form */
+.azure-config-form {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.azure-input-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--uam-grey-dark);
+}
+
+.azure-input-field {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: #FFFFFF;
+}
+
+.azure-input-field:focus {
+  outline: none;
+  border-color: var(--uam-teal);
+  box-shadow: 0 0 0 2px var(--uam-teal-soft);
+}
+
+.azure-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.azure-status-badge.is-connected {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.azure-status-badge.is-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+/* Footer in Login Card */
+.login-footer-info {
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+/* Sidebar Logout Button */
+.sidebar-logout-btn {
+  width: 100%;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--uam-grey-dark);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.sidebar-logout-btn:hover {
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #DC2626;
+}

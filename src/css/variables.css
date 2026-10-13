@@ -1,0 +1,68 @@
+/**
+ * UAM ReportHub - Design System Variables
+ * Colores institucionales: #FFFFFF, #0099A8, #808284
+ * Títulos: Bold #808284
+ * Subtítulos: Normal #808284
+ */
+
+:root {
+  /* Brand Core Colors */
+  --uam-white: #FFFFFF;
+  --uam-teal: #0099A8;
+  --uam-teal-dark: #007D8A;
+  --uam-teal-darker: #005F69;
+  --uam-teal-light: #E0F4F7;
+  --uam-teal-glow: rgba(0, 153, 168, 0.25);
+  --uam-teal-soft: rgba(0, 153, 168, 0.08);
+
+  --uam-grey: #808284;
+  --uam-grey-dark: #58595B;
+  --uam-grey-light: #B0B2B5;
+  --uam-grey-soft: #F2F3F4;
+
+  /* Neutrals & Surfaces */
+  --bg-app: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-alt: #F1F5F9;
+  --border-color: #E2E8F0;
+  --border-teal: #BCE3E8;
+
+  /* Typography */
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-family-display: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Text Colors */
+  --text-main: #1E293B;
+  --text-title: #808284;
+  --text-subtitle: #808284;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+
+  /* Feedback Colors */
+  --status-success: #10B981;
+  --status-success-bg: #ECFDF5;
+  --status-warning: #F59E0B;
+  --status-warning-bg: #FFFBEB;
+  --status-danger: #EF4444;
+  --status-danger-bg: #FEF2F2;
+  --status-info: #0284C7;
+  --status-info-bg: #F0F9FF;
+  --status-purple: #8B5CF6;
+  --status-purple-bg: #F5F3FF;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-teal: 0 4px 14px 0 rgba(0, 153, 168, 0.35);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
