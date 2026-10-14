@@ -475,8 +475,23 @@ class StorageService {
     users[index] = { ...users[index], ...userData };
     this.saveUsers(users);
     const current = this.getCurrentUser();
-    if (current && current.id === userData.id) {
+    if (current && (current.id === userData.id || current.email === userData.email)) {
       this.setCurrentUser(users[index]);
+
+      // Sincronizar también con la sesión activa de autenticación para persistencia
+      try {
+        const sessionRaw = localStorage.getItem('uam_reporthub_auth_session_v1');
+        if (sessionRaw) {
+          const session = JSON.parse(sessionRaw);
+          session.nombre = users[index].nombre;
+          session.email = users[index].email;
+          session.cargo = users[index].cargo;
+          session.dependencia = users[index].dependencia;
+          localStorage.setItem('uam_reporthub_auth_session_v1', JSON.stringify(session));
+        }
+      } catch (e) {
+        console.warn('Error sincronizando sesión activa:', e);
+      }
     }
     return users[index];
   }

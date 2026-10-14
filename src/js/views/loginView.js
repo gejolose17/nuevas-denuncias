@@ -19,12 +19,12 @@ export class LoginView {
 
     this.container.innerHTML = `
       <div class="login-card">
-        <!-- CABECERA INSTITUCIONAL UAM -->
+        <!-- CABECERA INSTITUCIONAL CON LOGO ANIMADO (EFECTO DE DIVISIÓN Y REUNIFICACIÓN) -->
         <div class="login-header">
-          <img src="./image/logo.png" alt="Universidad Americana (UAM)" class="login-logo-img" onerror="this.style.display='none'" />
-          <span class="login-badge-sys">Portal Oficial Institucional</span>
-          <h1 class="login-title">UAM ReportHub</h1>
-          <p class="login-subtitle">Sistema Integral de Denuncias Universitarias y Trazabilidad SETEC</p>
+          <div class="login-logo-split-container" title="Universidad Americana (UAM)">
+            <img src="./image/logo.png" alt="UAM" class="logo-half logo-half-left" />
+            <img src="./image/logo.png" alt="UAM" class="logo-half logo-half-right" />
+          </div>
         </div>
 
         <!-- AVISO DE ACCESO RESTRINGIDO A DOMINIO UAM -->
@@ -54,7 +54,7 @@ export class LoginView {
           </div>
         ` : ''}
 
-        <!-- BOTÓN EXCLUSIVO MICROSOFT SSO CORPORATIVO -->
+        <!-- BOTÓN EXCLUSIVO INICIAR SESIÓN CON MICROSOFT -->
         <button type="button" class="btn-microsoft-auth" id="btn-ms-login" ${this.isLoading ? 'disabled' : ''}>
           <!-- Icono Oficial Microsoft 4 Colores -->
           <svg class="ms-logo-svg" viewBox="0 0 21 21">
@@ -63,7 +63,7 @@ export class LoginView {
             <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
             <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
           </svg>
-          <span>${this.isLoading ? 'Redirigiendo a Microsoft Entra ID...' : 'Iniciar sesión con cuenta Microsoft (@uam.net.ni)'}</span>
+          <span>${this.isLoading ? 'Redirigiendo a Microsoft...' : 'Iniciar Sesión con Microsoft'}</span>
         </button>
 
         <!-- PIE DE TARJETA INSTITUCIONAL -->

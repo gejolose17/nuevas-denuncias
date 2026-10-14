@@ -50,42 +50,91 @@
   margin-bottom: 24px;
 }
 
-.login-logo-img {
-  height: 56px;
-  width: auto;
-  object-fit: contain;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
-}
-
-.login-badge-sys {
-  display: inline-flex;
+/* ANIMATED SPLIT-AND-REUNITE LOGO EFFECT */
+.login-logo-split-container {
+  position: relative;
+  width: 220px;
+  height: 72px;
+  margin: 0 auto;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--uam-teal);
-  background: var(--uam-teal-light);
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-bottom: 8px;
+  justify-content: center;
+  perspective: 800px;
 }
 
-.login-title {
-  font-size: 22px;
-  font-weight: 800;
-  color: #1E293B;
-  margin: 0 0 6px 0;
-  letter-spacing: -0.3px;
+.logo-half {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  will-change: transform, filter;
 }
 
-.login-subtitle {
-  font-size: 13.5px;
-  color: var(--uam-grey);
-  margin: 0;
-  line-height: 1.45;
+.logo-half-left {
+  clip-path: polygon(0% 0%, 50.5% 0%, 50.5% 100%, 0% 100%);
+  animation: logoSplitLeft 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.logo-half-right {
+  clip-path: polygon(49.5% 0%, 100% 0%, 100% 100%, 49.5% 100%);
+  animation: logoSplitRight 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes logoSplitLeft {
+  0%, 18% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06));
+  }
+  38% {
+    /* Splits apart to the left */
+    transform: translateX(-16px) translateY(-2px) rotate(-3.5deg);
+    filter: drop-shadow(-4px 4px 12px rgba(0, 153, 168, 0.45));
+  }
+  58% {
+    /* Holds gap with subtle float */
+    transform: translateX(-18px) translateY(-1px) rotate(-2deg);
+    filter: drop-shadow(-6px 4px 14px rgba(0, 153, 168, 0.38));
+  }
+  74% {
+    /* Magnetic snap back together */
+    transform: translateX(0) translateY(0) rotate(0deg);
+    filter: drop-shadow(0 0 16px rgba(0, 153, 168, 0.75));
+  }
+  86%, 100% {
+    /* Clean united state */
+    transform: translateX(0) translateY(0) rotate(0deg);
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06));
+  }
+}
+
+@keyframes logoSplitRight {
+  0%, 18% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06));
+  }
+  38% {
+    /* Splits apart to the right */
+    transform: translateX(16px) translateY(2px) rotate(3.5deg);
+    filter: drop-shadow(4px 4px 12px rgba(0, 153, 168, 0.45));
+  }
+  58% {
+    /* Holds gap with subtle float */
+    transform: translateX(18px) translateY(1px) rotate(2deg);
+    filter: drop-shadow(6px 4px 14px rgba(0, 153, 168, 0.38));
+  }
+  74% {
+    /* Magnetic snap back together */
+    transform: translateX(0) translateY(0) rotate(0deg);
+    filter: drop-shadow(0 0 16px rgba(0, 153, 168, 0.75));
+  }
+  86%, 100% {
+    /* Clean united state */
+    transform: translateX(0) translateY(0) rotate(0deg);
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06));
+  }
 }
 
 /* Security notice banner */
@@ -146,33 +195,33 @@
   75% { transform: translateX(4px); }
 }
 
-/* Official Microsoft Button */
+/* Official Microsoft Button Styled in #0099A8 */
 .btn-microsoft-auth {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  background: #2F2F2F;
-  color: #FFFFFF;
-  border: 1px solid #2F2F2F;
-  border-radius: 8px;
+  gap: 12px;
+  background-color: #0099A8 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #008896;
+  border-radius: 10px;
   padding: 14px 20px;
-  font-size: 14.5px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 153, 168, 0.32);
 }
 
-.btn-microsoft-auth:hover {
-  background: #1A1A1A;
-  border-color: #1A1A1A;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+.btn-microsoft-auth:hover:not(:disabled) {
+  background-color: #008390 !important;
+  border-color: #007480;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 153, 168, 0.44);
 }
 
-.btn-microsoft-auth:active {
+.btn-microsoft-auth:active:not(:disabled) {
   transform: translateY(0);
 }
 

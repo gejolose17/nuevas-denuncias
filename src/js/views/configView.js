@@ -15,7 +15,7 @@ export class ConfigView {
   constructor(containerEl, onUserChanged = null) {
     this.container = containerEl;
     this.onUserChanged = onUserChanged;
-    this.activeSubtab = 'listas'; // 'listas' | 'alta_usuario' | 'usuarios_roles'
+    this.activeSubtab = 'perfil'; // 'perfil' | 'usuarios_roles' | 'alta_usuario' | 'listas'
     this.selectedDepId = null;
     this.selectedFacId = null;
   }
@@ -59,16 +59,19 @@ export class ConfigView {
           </div>
         </div>
 
-        <!-- 3 SUB-PESTAÑAS SEPARADAS DE CONFIGURACIÓN -->
+        <!-- 4 SUB-PESTAÑAS DE CONFIGURACIÓN -->
         <div class="config-tabs-nav">
-          <button type="button" class="cfg-tab-btn ${this.activeSubtab === 'listas' ? 'is-active' : ''}" data-subtab="listas">
-            📁 ADMINISTRAR LISTAS DESPLEGABLES
-          </button>
-          <button type="button" class="cfg-tab-btn ${this.activeSubtab === 'alta_usuario' ? 'is-active' : ''}" data-subtab="alta_usuario">
-            👤 ALTA DE NUEVOS USUARIOS
+          <button type="button" class="cfg-tab-btn ${this.activeSubtab === 'perfil' ? 'is-active' : ''}" data-subtab="perfil">
+            👤 MI PERFIL (${currentUser.rol})
           </button>
           <button type="button" class="cfg-tab-btn ${this.activeSubtab === 'usuarios_roles' ? 'is-active' : ''}" data-subtab="usuarios_roles">
-            👥 USUARIOS REGISTRADOS Y ASIGNACIÓN DE ROLES (${users.length})
+            👥 USUARIOS REGISTRADOS Y ROLES (${users.length})
+          </button>
+          <button type="button" class="cfg-tab-btn ${this.activeSubtab === 'alta_usuario' ? 'is-active' : ''}" data-subtab="alta_usuario">
+            ➕ ALTA DE NUEVOS USUARIOS
+          </button>
+          <button type="button" class="cfg-tab-btn ${this.activeSubtab === 'listas' ? 'is-active' : ''}" data-subtab="listas">
+            📁 ADMINISTRAR LISTAS DESPLEGABLES
           </button>
         </div>
 
@@ -83,6 +86,8 @@ export class ConfigView {
 
   renderSubtabContent(departamentos, currentDep, facultades, currentFac, categorias, tipos, users, currentUser) {
     switch (this.activeSubtab) {
+      case 'perfil':
+        return this.renderPerfilTab(currentUser);
       case 'listas':
         return this.renderListasTab(departamentos, currentDep, facultades, currentFac, categorias, tipos);
       case 'alta_usuario':
@@ -90,11 +95,104 @@ export class ConfigView {
       case 'usuarios_roles':
         return this.renderUsuariosRolesTab(users, currentUser);
       default:
-        return this.renderListasTab(departamentos, currentDep, facultades, currentFac, categorias, tipos);
+        return this.renderPerfilTab(currentUser);
     }
   }
 
-  // VISTA 1: ADMINISTRAR LISTAS DESPLEGABLES
+  // SUBTAB 1: MI PERFIL (SUPERADMIN / USUARIO ACTIVO)
+  renderPerfilTab(currentUser) {
+    const parts = (currentUser.nombre || 'UAM').split(' ');
+    const initials = parts.length > 1 ? `${parts[0][0]}${parts[1][0]}` : currentUser.nombre.substring(0, 2);
+
+    return `
+      <div class="card subcard form-user-dedicated-view animate-fade-in">
+        <div class="dedicated-form-header">
+          <div class="header-icon-box" style="background: rgba(0, 153, 168, 0.1); color: #0099A8;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div>
+            <h3 class="dedicated-title">MI PERFIL INSTITUCIONAL (${currentUser.rol})</h3>
+            <p class="dedicated-subtitle">Actualice su información personal, credenciales institucionales y datos oficiales como ${currentUser.rol}</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 24px; padding: 18px 22px; background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 12px;">
+          <div style="width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg, #002347 0%, #0099A8 100%); color: #FFFFFF; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 153, 168, 0.28); flex-shrink: 0;">
+            ${initials.toUpperCase()}
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap;">
+              <h4 style="font-size: 17px; font-weight: 800; color: #1E293B; margin: 0;">${currentUser.nombre}</h4>
+              ${this.getRoleLevelBadge(currentUser.rol)}
+            </div>
+            <p style="font-size: 13px; color: #64748B; margin: 0;">
+              <strong>${currentUser.cargo}</strong> • ${currentUser.dependencia || 'Universidad Americana'}
+            </p>
+            <span style="font-size: 12px; color: #0099A8; font-weight: 600;">${currentUser.email}</span>
+          </div>
+        </div>
+
+        <form id="form-edit-my-profile" class="user-dedicated-grid">
+          <div class="form-group">
+            <label class="form-label" for="my-profile-nombre">Nombre y Apellidos Completos <span class="required">*</span></label>
+            <input type="text" id="my-profile-nombre" class="form-control" value="${currentUser.nombre || ''}" required />
+            <small class="field-hint">Nombre oficial con título profesional</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="my-profile-email">Correo Electrónico Institucional <span class="required">*</span></label>
+            <input type="email" id="my-profile-email" class="form-control" value="${currentUser.email || ''}" required />
+            <small class="field-hint">Cuenta corporativa @uam.net.ni</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="my-profile-cargo">Cargo Oficial <span class="required">*</span></label>
+            <input type="text" id="my-profile-cargo" class="form-control" value="${currentUser.cargo || ''}" required />
+            <small class="field-hint">Puesto administrativo o académico oficial</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="my-profile-dependencia">Dependencia o Dirección <span class="required">*</span></label>
+            <input type="text" id="my-profile-dependencia" class="form-control" value="${currentUser.dependencia || ''}" required />
+            <small class="field-hint">Área a la que pertenece el funcionario</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="my-profile-telefono">Teléfono o Extensión Interna</label>
+            <input type="text" id="my-profile-telefono" class="form-control" placeholder="Ej. +505 2278-3800 Ext. 1024" value="${currentUser.telefono || ''}" />
+            <small class="field-hint">Contacto directo institucional</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="my-profile-tipo-autoridad">Tipo de Autoridad para Dictámenes</label>
+            <select id="my-profile-tipo-autoridad" class="form-control custom-select">
+              <option value="" ${!currentUser.tipoAutoridad ? 'selected' : ''}>Ninguno / Usuario Regular</option>
+              <option value="Secretaria General" ${currentUser.tipoAutoridad === 'Secretaria General' ? 'selected' : ''}>Secretaría General</option>
+              <option value="Decano de la Facultad" ${currentUser.tipoAutoridad === 'Decano de la Facultad' ? 'selected' : ''}>Decano de la Facultad</option>
+              <option value="Dirección de Planificación y Gestión de Calidad" ${currentUser.tipoAutoridad === 'Dirección de Planificación y Gestión de Calidad' ? 'selected' : ''}>Dirección de Planificación y Gestión de Calidad</option>
+            </select>
+            <small class="field-hint">Habilita firma y asignación en la fase de resolución</small>
+          </div>
+
+          <div class="form-actions-bar" style="grid-column: span 3; margin-top: 16px;">
+            <button type="submit" class="btn btn-primary btn-lg" id="btn-save-my-profile">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Guardar Cambios en Mi Perfil
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+
+  // VISTA 2: ADMINISTRAR LISTAS DESPLEGABLES
   renderListasTab(departamentos, currentDep, facultades, currentFac, categorias, tipos) {
     return `
       <div class="catalog-sections-grid animate-fade-in">
@@ -360,7 +458,7 @@ export class ConfigView {
   renderUsuariosRolesTab(users, currentUser) {
     return `
       <div class="users-roles-dedicated-view animate-fade-in">
-        <!-- SIMULADOR DE USUARIO ACTIVO (SWITCH) -->
+        <!-- SIMULADOR DE USUARIO ACTIVO (SWITCH) Y ACCESO A MI PERFIL -->
         <div class="user-switch-bar">
           <div class="switch-info">
             <span class="switch-title">Sesión Activa:</span>
@@ -368,15 +466,20 @@ export class ConfigView {
             <span class="badge ${this.getRoleBadge(currentUser.rol)}">${currentUser.rol}</span>
             <span class="switch-cargo">(${currentUser.cargo})</span>
           </div>
-          <div class="switch-picker">
-            <label>Cambiar Usuario para Probar Permisos:</label>
-            <select id="cfg-switch-user" class="form-control custom-select">
-              ${users.map(u => `
-                <option value="${u.id}" ${u.id === currentUser.id ? 'selected' : ''}>
-                  ${u.nombre} • ${u.rol} (${u.cargo})
-                </option>
-              `).join('')}
-            </select>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-outline btn-sm" id="btn-quick-edit-my-profile" style="background:#FFFFFF; font-weight: 600; color: #0099A8; border-color: #0099A8;">
+              ✏️ Editar Mi Perfil
+            </button>
+            <div class="switch-picker">
+              <label>Cambiar Usuario:</label>
+              <select id="cfg-switch-user" class="form-control custom-select">
+                ${users.map(u => `
+                  <option value="${u.id}" ${u.id === currentUser.id ? 'selected' : ''}>
+                    ${u.nombre} • ${u.rol} (${u.cargo})
+                  </option>
+                `).join('')}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -482,6 +585,44 @@ export class ConfigView {
         this.render();
       });
     });
+
+    // Formulario de edición de mi perfil (Subtab perfil)
+    const formMyProfile = document.getElementById('form-edit-my-profile');
+    if (formMyProfile) {
+      formMyProfile.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const currentUser = storage.getCurrentUser();
+        const updatedData = {
+          id: currentUser.id,
+          nombre: document.getElementById('my-profile-nombre').value.trim(),
+          email: document.getElementById('my-profile-email').value.trim(),
+          cargo: document.getElementById('my-profile-cargo').value.trim(),
+          dependencia: document.getElementById('my-profile-dependencia').value.trim(),
+          telefono: document.getElementById('my-profile-telefono')?.value.trim() || '',
+          tipoAutoridad: document.getElementById('my-profile-tipo-autoridad')?.value || undefined,
+          rol: currentUser.rol,
+          activo: true
+        };
+
+        const result = storage.updateUser(updatedData);
+        if (result) {
+          toast.success(`Información de su perfil actualizada exitosamente, ${result.nombre}.`, 'Perfil Actualizado');
+          if (this.onUserChanged) {
+            this.onUserChanged(result);
+          }
+          this.render();
+        }
+      });
+    }
+
+    // Botón de acceso rápido a mi perfil en la barra de switch de usuarios
+    const btnQuickEdit = document.getElementById('btn-quick-edit-my-profile');
+    if (btnQuickEdit) {
+      btnQuickEdit.addEventListener('click', () => {
+        this.activeSubtab = 'perfil';
+        this.render();
+      });
+    }
 
     // Reset defaults button
     const btnReset = document.getElementById('btn-reset-defaults');
@@ -886,8 +1027,11 @@ export class ConfigView {
           activo: document.getElementById('edit-usr-activo').value === 'true'
         };
 
-        storage.updateUser(updatedData);
+        const result = storage.updateUser(updatedData);
         toast.success(`Datos de ${updatedData.nombre} actualizados con éxito.`);
+        if (this.onUserChanged && user.id === storage.getCurrentUser()?.id) {
+          this.onUserChanged(result);
+        }
         closeModal();
         this.render();
       });
