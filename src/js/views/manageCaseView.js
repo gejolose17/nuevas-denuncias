@@ -456,7 +456,15 @@ export class ManageCaseView {
                     </svg>
                     <div class="drop-zone-text">
                       <strong>Arrastre y suelte actas, informes o evidencias institucionales</strong>
-                      <span>o haga clic para examinar archivos locales (PDF, DOCX, XLSX, JPG, PNG)</span>
+                      <span>Formatos admitidos: PDF, DOCX, XLSX, JPG, PNG (Hasta 25 MB)</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                      <button type="button" class="btn btn-primary btn-sm" id="btn-univ-trigger-upload" style="background-color: #0099A8; border-color: #008896; font-weight: 700; gap: 8px; box-shadow: 0 2px 8px rgba(0, 153, 168, 0.25); cursor: pointer;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                        </svg>
+                        <span>Adjuntar Documentos Institucionales</span>
+                      </button>
                     </div>
                     <input type="file" id="univ-evidencias-input" multiple style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" />
                   </div>
@@ -588,6 +596,15 @@ export class ManageCaseView {
     const fileInput = document.getElementById('univ-evidencias-input');
     if (dropZone && fileInput) {
       dropZone.addEventListener('click', () => fileInput.click());
+
+      const btnUnivTrigger = document.getElementById('btn-univ-trigger-upload');
+      if (btnUnivTrigger) {
+        btnUnivTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          fileInput.click();
+        });
+      }
+
       dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.classList.add('is-dragover');

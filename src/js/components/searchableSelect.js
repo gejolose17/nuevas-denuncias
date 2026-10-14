@@ -5,21 +5,30 @@
  */
 
 export class SearchableSelect {
-  constructor({
-    containerId,
-    placeholder = 'Seleccionar...',
-    searchPlaceholder = 'Buscar en la lista...',
-    options = [],
-    initialValue = '',
-    onChange = null,
-    disabled = false,
-    id = null
-  }) {
+  constructor(arg1, arg2 = {}) {
+    let config = {};
+    if (arg1 && (arg1 instanceof HTMLElement || typeof arg1 === 'string') && typeof arg2 === 'object') {
+      config = { containerId: arg1, ...arg2 };
+    } else if (arg1 && typeof arg1 === 'object') {
+      config = arg1;
+    }
+
+    const {
+      containerId,
+      placeholder = 'Seleccionar...',
+      searchPlaceholder = 'Buscar en la lista...',
+      options = [],
+      initialValue = '',
+      onChange = null,
+      disabled = false,
+      id = null
+    } = config;
+
     this.container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
     this.placeholder = placeholder;
     this.searchPlaceholder = searchPlaceholder;
-    this.options = options; // Array of strings or { label, value }
-    this.selectedValue = initialValue;
+    this.options = Array.isArray(options) ? options : [];
+    this.selectedValue = initialValue || '';
     this.onChange = onChange;
     this.disabled = disabled;
     this.id = id || `searchable-${Math.random().toString(36).substring(2, 9)}`;

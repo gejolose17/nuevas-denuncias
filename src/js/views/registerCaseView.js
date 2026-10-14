@@ -228,6 +228,9 @@ export class RegisterCaseView {
                 <span class="photo-change-hint">Cambiar foto</span>
               </div>
             </div>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-upload-photo-direct" style="margin-top: 6px; font-size: 11.5px; padding: 4px 10px; font-weight: 600; color: #0099A8; border-color: #0099A8; background: #FFFFFF; width: 100%; cursor: pointer;">
+              📷 Cargar Foto
+            </button>
             <button type="button" class="btn-clear-student-photo" id="btn-clear-photo" style="${this.studentPhotoBase64 ? 'display: block;' : 'display: none;'}" title="Eliminar foto">&times;</button>
           </div>
         </div>
@@ -473,7 +476,15 @@ export class RegisterCaseView {
               </svg>
               <div class="drop-zone-text">
                 <strong>Arrastre y suelte sus archivos aquí</strong>
-                <span>o haga clic para examinar desde su equipo (PDF, DOCX, JPG, PNG)</span>
+                <span>Formatos admitidos: PDF, DOCX, XLSX, JPG, PNG (Hasta 25 MB)</span>
+              </div>
+              <div style="margin-top: 10px;">
+                <button type="button" class="btn btn-primary btn-sm" id="btn-trigger-upload-files" style="background-color: #0099A8; border-color: #008896; font-weight: 700; gap: 8px; box-shadow: 0 2px 8px rgba(0, 153, 168, 0.25); cursor: pointer;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                  </svg>
+                  <span>Adjuntar Archivos / Explorar</span>
+                </button>
               </div>
               <input type="file" id="reg-evidencias-input" multiple style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" />
             </div>
@@ -540,6 +551,14 @@ export class RegisterCaseView {
 
     photoDropzone.addEventListener('click', () => photoInput.click());
 
+    const btnDirectPhoto = document.getElementById('btn-upload-photo-direct');
+    if (btnDirectPhoto) {
+      btnDirectPhoto.addEventListener('click', (e) => {
+        e.stopPropagation();
+        photoInput.click();
+      });
+    }
+
     photoInput.addEventListener('change', () => {
       if (photoInput.files && photoInput.files[0]) {
         const file = photoInput.files[0];
@@ -569,6 +588,8 @@ export class RegisterCaseView {
   initSearchableLocationSelects(departamentos) {
     const depContainer = document.getElementById('select-departamento-container');
     const munContainer = document.getElementById('select-municipio-container');
+
+    if (!depContainer || !munContainer || !Array.isArray(departamentos)) return;
 
     const depOptions = departamentos.map(d => ({ value: d.nombre, label: d.nombre, id: d.id }));
 
@@ -660,6 +681,14 @@ export class RegisterCaseView {
     if (!dropZone || !fileInput) return;
 
     dropZone.addEventListener('click', () => fileInput.click());
+
+    const btnTrigger = document.getElementById('btn-trigger-upload-files');
+    if (btnTrigger) {
+      btnTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+      });
+    }
 
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();

@@ -339,9 +339,11 @@ class StorageService {
   // --- CONFIG: DEPARTAMENTOS & MUNICIPIOS ---
   getDepartamentos() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.DEPARTAMENTOS)) || [];
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.DEPARTAMENTOS));
+      if (Array.isArray(data) && data.length > 0) return data;
+      return INITIAL_DEPARTAMENTOS;
     } catch {
-      return [];
+      return INITIAL_DEPARTAMENTOS;
     }
   }
 
@@ -353,9 +355,11 @@ class StorageService {
   // --- CONFIG: FACULTADES & CARRERAS ---
   getFacultades() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.FACULTADES)) || [];
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.FACULTADES));
+      if (Array.isArray(data) && data.length > 0) return data;
+      return INITIAL_FACULTADES;
     } catch {
-      return [];
+      return INITIAL_FACULTADES;
     }
   }
 
@@ -410,9 +414,11 @@ class StorageService {
   // --- CONFIG: CATEGORIAS & TIPOS ---
   getCategorias() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIAS)) || [];
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIAS));
+      if (Array.isArray(data) && data.length > 0) return data;
+      return INITIAL_CATEGORIAS;
     } catch {
-      return [];
+      return INITIAL_CATEGORIAS;
     }
   }
 
@@ -423,9 +429,11 @@ class StorageService {
 
   getTiposDenuncia() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.TIPOS_DENUNCIA)) || [];
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.TIPOS_DENUNCIA));
+      if (Array.isArray(data) && data.length > 0) return data;
+      return INITIAL_TIPOS_DENUNCIA;
     } catch {
-      return [];
+      return INITIAL_TIPOS_DENUNCIA;
     }
   }
 

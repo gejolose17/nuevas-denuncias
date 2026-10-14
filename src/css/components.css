@@ -375,20 +375,28 @@ textarea.form-control {
 }
 
 /* FILE UPLOAD ZONE */
-.file-upload-zone {
-  border: 2px dashed var(--border-teal);
-  background: rgba(0, 153, 168, 0.02);
+.file-upload-zone,
+.file-upload-drop-zone {
+  border: 2px dashed #0099A8;
+  background: rgba(0, 153, 168, 0.03);
   border-radius: var(--radius-sm);
-  padding: 24px;
+  padding: 24px 20px;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .file-upload-zone:hover,
-.file-upload-zone.is-dragover {
-  border-color: var(--uam-teal);
-  background: var(--uam-teal-soft);
+.file-upload-drop-zone:hover,
+.file-upload-zone.is-dragover,
+.file-upload-drop-zone.is-dragover {
+  border-color: #007682;
+  background: rgba(0, 153, 168, 0.08);
 }
 
 .file-input-hidden {
