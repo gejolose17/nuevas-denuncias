@@ -9,6 +9,7 @@
 
 import { storage } from '../services/storage.js';
 import { toast } from '../components/toast.js';
+import { ROLES_SISTEMA } from '../data/initialData.js';
 
 export class ConfigView {
   constructor(containerEl, onUserChanged = null) {
@@ -278,13 +279,14 @@ export class ConfigView {
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="usr-rol">Rol en el Sistema <span class="required">*</span></label>
+            <label class="form-label" for="usr-rol">Nivel de Seguridad y Rol <span class="required">*</span></label>
             <select id="usr-rol" class="form-control custom-select" required>
-              <option value="RESPONSABLE">Responsable (Autoridad de Dictamen / Revisión)</option>
-              <option value="ADMIN">Admin (Coordinador de Auditoría y Control)</option>
-              <option value="SUPERADMIN">Superadmin (Acceso y Control Total)</option>
+              <option value="ESTANDAR">Estándar (Nivel 4 - Operador de Registro y Radicación)</option>
+              <option value="SUPERVISOR">Supervisor (Nivel 3 - Auditoría, Dictámenes y SLA)</option>
+              <option value="ADMIN">Administrador (Nivel 2 - Gestión y Control de Denuncias)</option>
+              <option value="SUPERADMIN">Superadministrador (Nivel 1 - Control Total)</option>
             </select>
-            <small class="field-hint">Nivel de autorización en la plataforma</small>
+            <small class="field-hint">Nivel de autorización y permisos en la plataforma</small>
           </div>
 
           <div class="form-group">
@@ -322,6 +324,34 @@ export class ConfigView {
             </button>
           </div>
         </form>
+
+        <!-- PLAN INSTITUCIONAL DE NIVELES DE SEGURIDAD Y ROLES -->
+        <div style="margin-top: 28px; padding: 22px; background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 12px;">
+          <h4 style="font-size: 13.5px; font-weight: 800; color: #1E293B; margin: 0 0 14px 0; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            PLAN DE NIVELES DE SEGURIDAD INSTITUCIONAL (ROLES DE ACCESO)
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+            <div style="background: #FFFFFF; padding: 14px; border-radius: 8px; border-left: 4px solid #EF4444; box-shadow: var(--shadow-sm);">
+              <span class="badge badge-danger">NIVEL 1: SUPERADMIN</span>
+              <p style="font-size: 11.5px; color: #475569; margin: 8px 0 0 0; line-height: 1.45;">Control absoluto. Administración y asignación de todos los roles, configuración global, papelera y auditoría de la plataforma.</p>
+            </div>
+            <div style="background: #FFFFFF; padding: 14px; border-radius: 8px; border-left: 4px solid #F59E0B; box-shadow: var(--shadow-sm);">
+              <span class="badge badge-warning">NIVEL 2: ADMIN</span>
+              <p style="font-size: 11.5px; color: #475569; margin: 8px 0 0 0; line-height: 1.45;">Gestión operativa completa de denuncias, coordinación de auditoría, catálogos institucionales y alta/edición de usuarios.</p>
+            </div>
+            <div style="background: #FFFFFF; padding: 14px; border-radius: 8px; border-left: 4px solid #8B5CF6; box-shadow: var(--shadow-sm);">
+              <span class="badge badge-purple">NIVEL 3: SUPERVISOR</span>
+              <p style="font-size: 11.5px; color: #475569; margin: 8px 0 0 0; line-height: 1.45;">Auditoría de casos, seguimiento de alertas SLA, emisión y firma de dictámenes resolutivos y trazabilidad SETEC.</p>
+            </div>
+            <div style="background: #FFFFFF; padding: 14px; border-radius: 8px; border-left: 4px solid #0099A8; box-shadow: var(--shadow-sm);">
+              <span class="badge badge-info">NIVEL 4: ESTÁNDAR</span>
+              <p style="font-size: 11.5px; color: #475569; margin: 8px 0 0 0; line-height: 1.45;">Radicación y registro inicial de nuevos casos, consulta del estado y trazabilidad de expedientes asignados.</p>
+            </div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -366,7 +396,7 @@ export class ConfigView {
               <tr>
                 <th>Funcionario / Nombre</th>
                 <th>Correo Institucional</th>
-                <th>Rol</th>
+                <th>Nivel de Seguridad y Rol</th>
                 <th>Cargo Oficial</th>
                 <th>Dependencia</th>
                 <th>Tipo Autoridad</th>
@@ -382,7 +412,7 @@ export class ConfigView {
                   </td>
                   <td style="color: #0099A8; font-weight: 500;">${u.email}</td>
                   <td>
-                    <span class="badge ${this.getRoleBadge(u.rol)}">${u.rol}</span>
+                    ${this.getRoleLevelBadge(u.rol)}
                   </td>
                   <td>${u.cargo}</td>
                   <td>${u.dependencia}</td>
@@ -423,7 +453,24 @@ export class ConfigView {
     switch (rol) {
       case 'SUPERADMIN': return 'badge-danger';
       case 'ADMIN': return 'badge-warning';
+      case 'SUPERVISOR': return 'badge-purple';
+      case 'ESTANDAR': return 'badge-info';
       default: return 'badge-info';
+    }
+  }
+
+  getRoleLevelBadge(rol) {
+    switch (rol) {
+      case 'SUPERADMIN':
+        return '<span class="badge badge-danger" title="Nivel 1: Control Total Absoluto">NIVEL 1 • SUPERADMIN</span>';
+      case 'ADMIN':
+        return '<span class="badge badge-warning" title="Nivel 2: Gestión y Auditoría">NIVEL 2 • ADMIN</span>';
+      case 'SUPERVISOR':
+        return '<span class="badge badge-purple" title="Nivel 3: Dictámenes, Auditoría y SLA">NIVEL 3 • SUPERVISOR</span>';
+      case 'ESTANDAR':
+        return '<span class="badge badge-info" title="Nivel 4: Radicación y Consulta">NIVEL 4 • ESTÁNDAR</span>';
+      default:
+        return `<span class="badge badge-info">NIVEL 4 • ${rol}</span>`;
     }
   }
 
@@ -764,13 +811,14 @@ export class ConfigView {
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="edit-usr-rol">Rol en el Sistema <span class="required">*</span></label>
+                <label class="form-label" for="edit-usr-rol">Nivel de Seguridad y Rol <span class="required">*</span></label>
                 <select id="edit-usr-rol" class="form-control custom-select" required ${user.rol === 'SUPERADMIN' ? 'disabled' : ''}>
-                  <option value="RESPONSABLE" ${user.rol === 'RESPONSABLE' ? 'selected' : ''}>Responsable</option>
-                  <option value="ADMIN" ${user.rol === 'ADMIN' ? 'selected' : ''}>Admin</option>
-                  <option value="SUPERADMIN" ${user.rol === 'SUPERADMIN' ? 'selected' : ''}>Superadmin</option>
+                  <option value="ESTANDAR" ${user.rol === 'ESTANDAR' ? 'selected' : ''}>Estándar (Nivel 4 - Operador)</option>
+                  <option value="SUPERVISOR" ${user.rol === 'SUPERVISOR' ? 'selected' : ''}>Supervisor (Nivel 3 - Dictamen y SLA)</option>
+                  <option value="ADMIN" ${user.rol === 'ADMIN' ? 'selected' : ''}>Administrador (Nivel 2 - Gestión y Control)</option>
+                  <option value="SUPERADMIN" ${user.rol === 'SUPERADMIN' ? 'selected' : ''}>Superadministrador (Nivel 1 - Control Total)</option>
                 </select>
-                ${user.rol === 'SUPERADMIN' ? '<small class="field-hint">Rol permanente de Superadministrador</small>' : ''}
+                ${user.rol === 'SUPERADMIN' ? '<small class="field-hint" style="color: #EF4444; font-weight: 700;">Rol permanente de Superadministrador (no modificable)</small>' : ''}
               </div>
 
               <div class="form-group">

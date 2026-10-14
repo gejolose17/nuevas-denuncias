@@ -45,18 +45,42 @@ class StorageService {
       localStorage.setItem(STORAGE_KEYS.TRASH, JSON.stringify([]));
     }
 
-    // Ensure Superadmin is Ing. Gerardo Lopez with gerardo.lopez@uam.net.ni
+    // Migración y garantía del nuevo Plan de 4 Roles (SUPERADMIN, ADMIN, SUPERVISOR, ESTANDAR)
     const storedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
     if (!storedUsers) {
       localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(INITIAL_USERS));
     } else {
       try {
         const parsed = JSON.parse(storedUsers);
-        const superAdmin = parsed.find(u => u.rol === 'SUPERADMIN' || u.id === 'usr-01');
-        if (superAdmin && superAdmin.email !== 'gerardo.lopez@uam.net.ni') {
-          superAdmin.nombre = 'Ing. Gerardo López';
-          superAdmin.email = 'gerardo.lopez@uam.net.ni';
-          superAdmin.dependencia = 'Rectoría / Dirección de Tecnología';
+        let changed = false;
+
+        parsed.forEach(u => {
+          // Garantizar Superadmin Ing. Gerardo López
+          if (u.id === 'usr-01' || (u.email && u.email.toLowerCase() === 'gerardo.lopez@uam.net.ni')) {
+            u.id = 'usr-01';
+            u.nombre = 'Ing. Gerardo López';
+            u.email = 'gerardo.lopez@uam.net.ni';
+            u.rol = 'SUPERADMIN';
+            u.cargo = 'Administrador General del Sistema ReportHub';
+            u.dependencia = 'Rectoría / Dirección de Tecnología';
+            u.activo = true;
+            changed = true;
+          } else if (u.rol === 'RESPONSABLE' || u.rol === 'SETEC_AUDITOR') {
+            u.rol = 'SUPERVISOR';
+            changed = true;
+          } else if (u.rol === 'CONSULTOR' || !['SUPERADMIN', 'ADMIN', 'SUPERVISOR', 'ESTANDAR'].includes(u.rol)) {
+            u.rol = 'ESTANDAR';
+            changed = true;
+          }
+        });
+
+        // Asegurar que usr-01 esté presente
+        if (!parsed.some(u => u.id === 'usr-01' || u.email === 'gerardo.lopez@uam.net.ni')) {
+          parsed.unshift(INITIAL_USERS[0]);
+          changed = true;
+        }
+
+        if (changed) {
           localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(parsed));
         }
       } catch (e) {
@@ -469,7 +493,7 @@ class StorageService {
   deleteUser(id) {
     const users = this.getUsers();
     const targetUser = users.find(u => u.id === id);
-    if (!targetUser) return false;
+    if (!targetUser || targetUser.rol === 'SUPERADMIN' || targetUser.id === 'usr-01') return false;
 
     const currentUser = this.getCurrentUser();
     const trash = this.getTrash();

@@ -341,6 +341,37 @@ export const INITIAL_TIPOS_DENUNCIA = [
   "Solicitud de Revisión Extraordinaria ante Consejo"
 ];
 
+export const ROLES_SISTEMA = [
+  {
+    id: "SUPERADMIN",
+    nombre: "Superadministrador",
+    nivel: 1,
+    badgeClass: "badge-danger",
+    descripcion: "Control total y configuración de la plataforma, auditoría global y asignación de todos los roles."
+  },
+  {
+    id: "ADMIN",
+    nombre: "Administrador",
+    nivel: 2,
+    badgeClass: "badge-warning",
+    descripcion: "Gestión y resolución integral de denuncias, coordinación operativa y administración de usuarios."
+  },
+  {
+    id: "SUPERVISOR",
+    nombre: "Supervisor / Auditor",
+    nivel: 3,
+    badgeClass: "badge-purple",
+    descripcion: "Auditoría de casos, seguimiento de alertas SLA, emisión y firma de dictámenes de autoridades."
+  },
+  {
+    id: "ESTANDAR",
+    nombre: "Estándar / Operador",
+    nivel: 4,
+    badgeClass: "badge-info",
+    descripcion: "Radicación, registro de nuevos casos y consulta del estado de expedientes asignados."
+  }
+];
+
 export const INITIAL_USERS = [
   {
     id: "usr-01",
@@ -360,12 +391,12 @@ export const INITIAL_USERS = [
     dependencia: "Unidad Central de Auditoría y Transparencia",
     activo: true
   },
-  // Autoridades: Secretaría General
+  // Autoridades: Secretaría General (SUPERVISOR)
   {
     id: "usr-03",
     nombre: "Dra. Ana Patricia Morales Silva",
     email: "ana.morales@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Secretaria General UAM",
     dependencia: "Secretaría General",
     tipoAutoridad: "Secretaria General",
@@ -375,18 +406,18 @@ export const INITIAL_USERS = [
     id: "usr-04",
     nombre: "Lic. Marvin Gómez Tercero",
     email: "marvin.gomez@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Secretario Adjunto y Notaría Universitaria",
     dependencia: "Secretaría General",
     tipoAutoridad: "Secretaria General",
     activo: true
   },
-  // Autoridades: Decanos de Facultades
+  // Autoridades: Decanos de Facultades (SUPERVISOR)
   {
     id: "usr-05",
     nombre: "Dr. Roberto José Blandón Ruiz",
     email: "roberto.blandon@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Decano de la Facultad de Ciencias Médicas",
     dependencia: "Facultad de Ciencias Médicas",
     tipoAutoridad: "Decano de la Facultad",
@@ -396,7 +427,7 @@ export const INITIAL_USERS = [
     id: "usr-06",
     nombre: "Dra. Claudia Elena Torres Pineda",
     email: "claudia.torres@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Decana de la Facultad de Odontología",
     dependencia: "Facultad de Odontología",
     tipoAutoridad: "Decano de la Facultad",
@@ -406,7 +437,7 @@ export const INITIAL_USERS = [
     id: "usr-07",
     nombre: "Ing. Álvaro Castillo Hurtado",
     email: "alvaro.castillo@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Decano de la Facultad de Ingeniería y Arquitectura",
     dependencia: "Facultad de Ingeniería y Arquitectura",
     tipoAutoridad: "Decano de la Facultad",
@@ -416,18 +447,18 @@ export const INITIAL_USERS = [
     id: "usr-08",
     nombre: "Msc. Gabriel Gutiérrez Solís",
     email: "gabriel.gutierrez@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Decano de Ciencias Jurídicas y Sociales",
     dependencia: "Facultad de Ciencias Jurídicas y Sociales",
     tipoAutoridad: "Decano de la Facultad",
     activo: true
   },
-  // Autoridades: Dirección de Planificación y Gestión de Calidad
+  // Autoridades: Dirección de Planificación y Gestión de Calidad (SUPERVISOR)
   {
     id: "usr-09",
     nombre: "Msc. Ligia Isabel Argüello Cruz",
     email: "ligia.arguello@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Directora de Planificación y Gestión de Calidad",
     dependencia: "Dirección de Planificación y Gestión de Calidad",
     tipoAutoridad: "Dirección de Planificación y Gestión de Calidad",
@@ -437,10 +468,29 @@ export const INITIAL_USERS = [
     id: "usr-10",
     nombre: "Ing. Fernando Sequeira Mora",
     email: "fernando.sequeira@uam.edu.ni",
-    rol: "RESPONSABLE",
+    rol: "SUPERVISOR",
     cargo: "Auditor Líder de Calidad y Procesos Académicos",
     dependencia: "Dirección de Planificación y Gestión de Calidad",
     tipoAutoridad: "Dirección de Planificación y Gestión de Calidad",
+    activo: true
+  },
+  // Operadores de Registro y Radicación (ESTANDAR)
+  {
+    id: "usr-11",
+    nombre: "Lic. Carlos Manuel Rivas",
+    email: "carlos.rivas@uam.edu.ni",
+    rol: "ESTANDAR",
+    cargo: "Oficial de Radicación y Atención de Denuncias",
+    dependencia: "Unidad Central de Auditoría y Transparencia",
+    activo: true
+  },
+  {
+    id: "usr-12",
+    nombre: "Ing. Sofía Carolina Mendoza",
+    email: "sofia.mendoza@uam.edu.ni",
+    rol: "ESTANDAR",
+    cargo: "Asistente de Registro y Control Estudiantil",
+    dependencia: "Secretaría General",
     activo: true
   }
 ];
