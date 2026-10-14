@@ -73,6 +73,19 @@ export class LoginView {
           <span>${this.isLoading ? 'Verificando credenciales...' : 'Iniciar sesión con Microsoft (@uam.net.ni)'}</span>
         </button>
 
+        <!-- SEPARADOR INSTITUCIONAL -->
+        <div class="login-divider">
+          <span>O Acceso Directo de Autoridad</span>
+        </div>
+
+        <!-- BOTÓN EXCLUSIVO SUPERADMIN (ING. GERARDO LÓPEZ) -->
+        <button type="button" class="btn-superadmin-auth" id="btn-superadmin-main" ${this.isLoading ? 'disabled' : ''}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zM9 7a3 3 0 0 1 6 0v3H9V7z"></path>
+          </svg>
+          <span>Ingreso Oficial Superadmin (Ing. Gerardo López)</span>
+        </button>
+
         <!-- PANEL DE VERIFICACIÓN / DIAGNÓSTICO -->
         <div class="login-test-section">
           <div class="login-test-header" id="toggle-test-section">
@@ -157,6 +170,24 @@ export class LoginView {
         } catch (err) {
           this.isLoading = false;
           this.errorMessage = err.message || 'Error al autenticar con Microsoft.';
+          this.render();
+        }
+      });
+    }
+
+    // Botón Principal Ingreso Oficial Superadmin (Ing. Gerardo López)
+    const btnSuperadminMain = this.container.querySelector('#btn-superadmin-main');
+    if (btnSuperadminMain) {
+      btnSuperadminMain.addEventListener('click', async () => {
+        try {
+          this.isLoading = true;
+          this.errorMessage = null;
+          const session = await authService.loginAsSuperadmin();
+          toast.success(`Bienvenido Ing. Gerardo López. Control Total Superadmin habilitado.`, 'Sesión Superadmin Iniciada');
+          if (this.onLoginSuccess) this.onLoginSuccess(session);
+        } catch (err) {
+          this.isLoading = false;
+          this.errorMessage = err.message || 'Error al iniciar sesión como Superadmin.';
           this.render();
         }
       });

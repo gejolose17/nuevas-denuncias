@@ -179,18 +179,42 @@ class AuthService {
       throw new Error(`Dominio no autorizado: La cuenta "${email}" no pertenece al dominio institucional @${this.primaryDomain}.`);
     }
 
-    // 2. BUSCAR O CREAR USUARIO EN EL SISTEMA
+    // 2. BUSCAR O REGISTRAR USUARIO
     const users = storage.getUsers();
-    let user = users.find(u => u.email.toLowerCase() === email);
+    let user = users.find(u => u.email.toLowerCase() === email || (email.includes('gerardo.lopez') && u.id === 'usr-01'));
 
-    if (!user) {
-      // Auto-registro institucional para funcionarios autenticados con Microsoft
+    const isGerardo = email.includes('gerardo.lopez') || email === 'gerardo.lopez@uam.net.ni';
+
+    if (isGerardo) {
+      if (!user) {
+        user = {
+          id: 'usr-01',
+          nombre: 'Ing. Gerardo López',
+          email: 'gerardo.lopez@uam.net.ni',
+          rol: 'SUPERADMIN',
+          cargo: 'Administrador General del Sistema ReportHub',
+          dependencia: 'Rectoría / Dirección de Tecnología',
+          activo: true
+        };
+        users.unshift(user);
+        storage.saveUsers(users);
+      } else {
+        user.nombre = 'Ing. Gerardo López';
+        user.email = 'gerardo.lopez@uam.net.ni';
+        user.rol = 'SUPERADMIN';
+        user.cargo = 'Administrador General del Sistema ReportHub';
+        user.dependencia = 'Rectoría / Dirección de Tecnología';
+        user.activo = true;
+        storage.updateUser(user);
+      }
+    } else if (!user) {
+      // Auto-registro institucional para otros funcionarios autenticados con Microsoft
       const displayName = account.name || (account.idTokenClaims?.name) || email.split('@')[0];
       user = {
         id: `usr-ms-${Date.now().toString().slice(-6)}`,
         nombre: displayName,
         email: email,
-        rol: email.includes('gerardo.lopez') ? 'SUPERADMIN' : 'CONSULTOR',
+        rol: 'CONSULTOR',
         cargo: 'Funcionario Institucional UAM',
         dependencia: 'Comunidad Universitaria UAM',
         activo: true
@@ -216,7 +240,7 @@ class AuthService {
   }
 
   /**
-   * Inicia sesión interactiva con Microsoft Entra ID usando Popup.
+   * Inicia sesión interactiva con Microsoft Entra ID usando Popup (o Redirect como fallback).
    */
   async loginWithMicrosoft() {
     const config = this.getAzureConfig();
@@ -226,7 +250,7 @@ class AuthService {
       config.clientId.length > 10;
 
     if (!hasValidClientId) {
-      throw new Error('CONFIG_MISSING');
+      throw new Error('CONFIG_MISSING: El Client ID de Microsoft Azure no ha sido configurado.');
     }
 
     if (!this.msalInstance) {
@@ -242,8 +266,65 @@ class AuthService {
       prompt: 'select_account'
     };
 
-    const response = await this.msalInstance.loginPopup(loginRequest);
-    return await this.processMsalAccount(response.account);
+    try {
+      const response = await this.msalInstance.loginPopup(loginRequest);
+      return await this.processMsalAccount(response.account);
+    } catch (popupErr) {
+      // Si el navegador bloqueó la ventana emergente, intentar con redirección
+      if (popupErr.message && (popupErr.message.includes('popup_window_error') || popupErr.message.includes('blocked'))) {
+        console.warn('Ventana emergente bloqueada, redirigiendo a Microsoft...');
+        await this.msalInstance.loginRedirect(loginRequest);
+        return;
+      }
+      throw popupErr;
+    }
+  }
+
+  /**
+   * Acceso directo institucional como SUPERADMIN (Ing. Gerardo López).
+   * Garantiza acceso inmediato con todos los privilegios de Superadministrador.
+   */
+  async loginAsSuperadmin() {
+    const users = storage.getUsers();
+    let superAdmin = users.find(u => u.id === 'usr-01' || u.email === 'gerardo.lopez@uam.net.ni' || u.rol === 'SUPERADMIN');
+
+    if (!superAdmin) {
+      superAdmin = {
+        id: 'usr-01',
+        nombre: 'Ing. Gerardo López',
+        email: 'gerardo.lopez@uam.net.ni',
+        rol: 'SUPERADMIN',
+        cargo: 'Administrador General del Sistema ReportHub',
+        dependencia: 'Rectoría / Dirección de Tecnología',
+        activo: true
+      };
+      users.unshift(superAdmin);
+      storage.saveUsers(users);
+    } else {
+      superAdmin.nombre = 'Ing. Gerardo López';
+      superAdmin.email = 'gerardo.lopez@uam.net.ni';
+      superAdmin.rol = 'SUPERADMIN';
+      superAdmin.cargo = 'Administrador General del Sistema ReportHub';
+      superAdmin.dependencia = 'Rectoría / Dirección de Tecnología';
+      superAdmin.activo = true;
+      storage.updateUser(superAdmin);
+    }
+
+    const sessionData = {
+      id: superAdmin.id,
+      nombre: superAdmin.nombre,
+      email: superAdmin.email,
+      rol: 'SUPERADMIN',
+      cargo: superAdmin.cargo,
+      dependencia: superAdmin.dependencia,
+      provider: 'superadmin_auth',
+      loginTime: new Date().toISOString()
+    };
+
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(sessionData));
+    storage.setCurrentUser(superAdmin);
+    this.notify('AUTH_STATE_CHANGED', { state: 'logged_in', user: superAdmin });
+    return sessionData;
   }
 
   /**
@@ -255,6 +336,10 @@ class AuthService {
     // Comprobar la misma regla de dominio
     if (!this.isAllowedDomain(email)) {
       throw new Error(`Dominio no autorizado: La cuenta "${email}" no pertenece al dominio corporativo @${this.primaryDomain}.`);
+    }
+
+    if (email.includes('gerardo.lopez')) {
+      return await this.loginAsSuperadmin();
     }
 
     const users = storage.getUsers();
