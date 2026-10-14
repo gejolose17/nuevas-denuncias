@@ -12,6 +12,7 @@ class AuthService {
   constructor() {
     this.msalInstance = null;
     this.isInitialized = false;
+    this.lastAuthError = null;
     this.listeners = new Set();
     this.allowedDomains = ['uam.net.ni', 'uam.edu.ni'];
     this.primaryDomain = 'uam.net.ni';
@@ -22,7 +23,10 @@ class AuthService {
    */
   getAzureConfig() {
     const rawRedirect = (import.meta.env.VITE_AZURE_REDIRECT_URI || '').trim();
-    const cleanRedirect = rawRedirect ? rawRedirect.split('#')[0] : window.location.origin;
+    // Limpiar hash, query params y diagonales finales para coincidencia exacta con Microsoft Entra ID
+    const cleanRedirect = rawRedirect
+      ? rawRedirect.split('#')[0].split('?')[0].replace(/\/+$/, '')
+      : window.location.origin.replace(/\/+$/, '');
 
     return {
       clientId: (import.meta.env.VITE_AZURE_CLIENT_ID || '').trim(),
@@ -37,6 +41,7 @@ class AuthService {
   async init() {
     if (this.isInitialized && this.msalInstance) return;
 
+    this.lastAuthError = null;
     const config = this.getAzureConfig();
     const hasValidClientId = config.clientId &&
       config.clientId !== 'tu_client_id_de_azure' &&
@@ -49,7 +54,8 @@ class AuthService {
           auth: {
             clientId: config.clientId,
             authority: `https://login.microsoftonline.com/${config.tenantId || 'organizations'}`,
-            redirectUri: config.redirectUri || window.location.origin
+            redirectUri: config.redirectUri || window.location.origin,
+            navigateToLoginRequestUrl: false
           },
           cache: {
             cacheLocation: 'localStorage',
@@ -66,7 +72,8 @@ class AuthService {
           await this.processMsalAccount(redirectResponse.account);
         }
       } catch (err) {
-        console.warn('[UAM Auth] Inicialización MSAL:', err);
+        console.error('[UAM Auth] Inicialización o procesamiento de retorno MSAL:', err);
+        this.lastAuthError = err.message || 'Error en la respuesta de autenticación de Microsoft.';
       }
     }
 
@@ -129,13 +136,6 @@ class AuthService {
 
     // 1. RESTRICCIÓN ESTRICTA DE DOMINIO INSTITUCIONAL
     if (!this.isAllowedDomain(email)) {
-      if (this.msalInstance) {
-        try {
-          await this.msalInstance.logoutPopup({ account });
-        } catch {
-          // Ignorar
-        }
-      }
       throw new Error(`Acceso denegado: La cuenta "${email}" no pertenece al dominio oficial @${this.primaryDomain}.`);
     }
 
@@ -206,8 +206,8 @@ class AuthService {
   }
 
   /**
-   * Inicia sesión interactiva con Microsoft Entra ID.
-   * Utiliza Popup por defecto y recurre automáticamente a Redirect si el navegador bloquea la ventana.
+   * Inicia sesión interactiva con Microsoft Entra ID usando redirección en la misma pestaña.
+   * Elimina completamente errores de ventanas emergentes (block_nested_popups) y bloqueadores de popups.
    */
   async loginWithMicrosoft() {
     const config = this.getAzureConfig();
@@ -233,36 +233,26 @@ class AuthService {
       prompt: 'select_account'
     };
 
-    try {
-      const response = await this.msalInstance.loginPopup(loginRequest);
-      return await this.processMsalAccount(response.account);
-    } catch (popupErr) {
-      // Si la ventana emergente fue bloqueada por el navegador, redirigir
-      const errMsg = popupErr.message || '';
-      if (popupErr.name === 'BrowserAuthError' || errMsg.includes('popup_window_error') || errMsg.includes('blocked')) {
-        console.warn('[UAM Auth] Ventana emergente bloqueada, redirigiendo a Microsoft Entra ID...');
-        await this.msalInstance.loginRedirect(loginRequest);
-        return null;
-      }
-      throw popupErr;
-    }
+    // Redirección directa y limpia: solución definitiva a block_nested_popups
+    await this.msalInstance.loginRedirect(loginRequest);
+    return null;
   }
 
   /**
-   * Cierra la sesión activa en la aplicación y en Microsoft.
+   * Cierra la sesión activa en la aplicación de forma limpia.
    */
   async logout() {
     localStorage.removeItem(AUTH_STORAGE_KEY);
+    sessionStorage.clear();
 
     if (this.msalInstance) {
       try {
-        const activeAccount = this.msalInstance.getActiveAccount() ||
-          (this.msalInstance.getAllAccounts().length > 0 ? this.msalInstance.getAllAccounts()[0] : null);
-        if (activeAccount) {
-          await this.msalInstance.logoutPopup({ account: activeAccount });
+        const accounts = this.msalInstance.getAllAccounts();
+        for (const account of accounts) {
+          await this.msalInstance.clearCache();
         }
       } catch (err) {
-        console.warn('Aviso al cerrar sesión en Microsoft:', err);
+        console.warn('[UAM Auth] Limpieza de sesión:', err);
       }
     }
 

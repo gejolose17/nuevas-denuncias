@@ -63,7 +63,7 @@ export class LoginView {
             <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
             <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
           </svg>
-          <span>${this.isLoading ? 'Verificando cuenta en Microsoft...' : 'Iniciar sesión con cuenta Microsoft (@uam.net.ni)'}</span>
+          <span>${this.isLoading ? 'Redirigiendo a Microsoft Entra ID...' : 'Iniciar sesión con cuenta Microsoft (@uam.net.ni)'}</span>
         </button>
 
         <!-- PIE DE TARJETA INSTITUCIONAL -->
@@ -86,22 +86,17 @@ export class LoginView {
           this.errorMessage = null;
           this.render();
 
-          const session = await authService.loginWithMicrosoft();
-          if (session) {
-            toast.success(`Bienvenido a UAM ReportHub, ${session.nombre}`, 'Acceso Autorizado');
-            if (this.onLoginSuccess) this.onLoginSuccess(session);
-          }
+          // Redirige a la pasarela de autenticación institucional de Microsoft Entra ID
+          await authService.loginWithMicrosoft();
         } catch (err) {
           this.isLoading = false;
-          let msg = err.message || 'No se pudo completar la autenticación con Microsoft.';
+          let msg = err.message || 'No se pudo iniciar la conexión con Microsoft.';
 
           // Limpiar mensajes técnicos para el usuario final
           if (msg.includes('user_cancelled')) {
             msg = 'Inicio de sesión cancelado por el usuario.';
-          } else if (msg.includes('popup_window_error') || msg.includes('blocked')) {
-            msg = 'El navegador bloqueó la ventana de Microsoft. Por favor autorice las ventanas emergentes (popups) o intente de nuevo.';
           } else if (msg.includes('AADSTS50011')) {
-            msg = 'Error de configuración en Azure: La URL de redirección no coincide con la registrada en el portal de Microsoft Entra ID.';
+            msg = 'Error de configuración en Microsoft Entra ID: La URL de redirección no coincide con la registrada. Verifique en Azure Portal que el tipo de plataforma sea "Single-page application (SPA)" con URL: https://nuevas-denuncias.vercel.app.';
           } else if (msg.includes('AADSTS50020')) {
             msg = 'La cuenta utilizada no existe en el directorio de la organización UAM o no tiene permisos asignados.';
           }

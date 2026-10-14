@@ -40,6 +40,10 @@ h1, h2, h3, h4, h5, .card-title, .section-main-title {
   background-color: var(--bg-app);
 }
 
+.app-layout[style*="display: none"] {
+  display: none !important;
+}
+
 /* LEFT SIDEBAR (PANEL IZQUIERDO) */
 .app-sidebar {
   width: 270px;

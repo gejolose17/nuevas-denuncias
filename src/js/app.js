@@ -34,14 +34,18 @@ class App {
       papelera: null
     };
 
+    // Estado visual inicial inmediato: NUNCA mostrar la app interna sin sesión confirmada
+    if (authService.isAuthenticated()) {
+      this.showAppLayout();
+    } else {
+      this.showLoginScreen();
+    }
+
     this.init();
   }
 
   async init() {
-    // 1. Inicializar MSAL / Configuración de Microsoft
-    await authService.init();
-
-    // 2. Escuchar cambios de autenticación
+    // 1. Escuchar cambios de autenticación
     authService.subscribe((event, data) => {
       if (event === 'AUTH_STATE_CHANGED') {
         if (data.state === 'logged_in') {
@@ -52,7 +56,7 @@ class App {
       }
     });
 
-    // 3. Escuchar eventos de almacenamiento
+    // 2. Escuchar eventos de almacenamiento
     storage.subscribe((eventType, payload) => {
       if (authService.isAuthenticated()) {
         this.updateTabBadges();
@@ -62,21 +66,27 @@ class App {
       }
     });
 
-    // 4. Verificar si ya existe sesión activa
+    // 3. Inicializar MSAL y procesar retorno de redirección de Microsoft Entra ID
+    await authService.init();
+
+    // 4. Si tras el retorno de Microsoft se autenticó exitosamente
     if (authService.isAuthenticated()) {
       this.showAppLayout();
-    } else {
-      this.showLoginScreen();
+    } else if (authService.lastAuthError) {
+      this.showLoginScreen(authService.lastAuthError);
     }
   }
 
-  showLoginScreen() {
+  showLoginScreen(errorMessage = null) {
     if (this.appLayoutEl) this.appLayoutEl.style.display = 'none';
     if (this.loginScreenEl) {
       this.loginScreenEl.style.display = 'flex';
       this.loginViewInstance = new LoginView(this.loginScreenEl, (session) => {
         this.showAppLayout();
       });
+      if (errorMessage) {
+        this.loginViewInstance.errorMessage = errorMessage;
+      }
       this.loginViewInstance.render();
     }
   }
